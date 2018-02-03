@@ -19,8 +19,21 @@ class Server(threading.Thread):
         @app.route('/')
         def dire_coucou():
             conf.brightness += 10
-            self.event_inter.set()
             return str(conf.brightness)
+
+        @app.route('/start')
+        def start():
+            if not conf.start:
+                conf.start = True
+                self.event_inter.set()
+            return "Start"
+
+        @app.route('/stop')
+        def stop():
+            if conf.start:
+                conf.start = False
+                self.event_inter.set()
+            return "Stop"
 
         print("Start Server")
         self.srv.serve_forever()

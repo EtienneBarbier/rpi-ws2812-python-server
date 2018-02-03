@@ -10,8 +10,9 @@ try:
     # Init all config variables
     conf.init()
 
-    # Create event
-    event_inter = threading.Event()
+    # Create events
+    event_end_start = threading.Event()
+    event_pause_run = threading.Event()
 
     # Create & Start flask server (thread)
     server = server.Server(event_inter)
@@ -21,7 +22,6 @@ try:
     controller = controller.Controller(event_inter)
     controller.run()
 
-    
 
     server.join()
 except KeyboardInterrupt:
