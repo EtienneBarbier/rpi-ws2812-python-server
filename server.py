@@ -35,6 +35,13 @@ class Server(threading.Thread):
                 self.event_end_start.set()
             return redirect("/")
 
+        @app.route('/stop')
+        def stop():
+            if conf.start:
+                conf.start = False
+                self.event_end_start.set()
+            return redirect("/")
+
         @app.route('/setTheaterChaseRainbow')
         def setTheaterChaseRainbow():
             conf.current = "THEATER_CHASE_RAINBOW"
@@ -55,11 +62,12 @@ class Server(threading.Thread):
             conf.current = "ALL"
             return redirect("/")
 
-        @app.route('/stop')
-        def stop():
-            if conf.start:
-                conf.start = False
-                self.event_end_start.set()
+        @app.route('/setFixedColor', methods=['GET'])
+        def setFixedColor():
+            conf.color[0] = request.args.get('r')
+            conf.color[1] = request.args.get('g')
+            conf.color[2] = request.args.get('b')
+            conf.current = "FIXED_COLOR"
             return redirect("/")
 
 

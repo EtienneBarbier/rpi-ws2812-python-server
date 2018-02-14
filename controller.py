@@ -10,26 +10,33 @@ from utils_controller import *
 
 
 # LED strip configuration:
-LED_COUNT      = 66     # Number of LED pixels.
-LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
-#LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
-LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
-LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
-LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
-LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
-#LED_STRIP      = ws.WS2811_STRIP_GRB   # Strip type and colour ordering
+LED_1_COUNT      = 42      # Number of LED pixels.
+LED_1_PIN        = 18      # GPIO pin connected to the pixels (must support PWM! GPIO 13 and 18 on RPi 3).
+LED_1_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
+LED_1_DMA        = 10      # DMA channel to use for generating signal (Between 1 and 14)
+LED_1_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
+LED_1_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+LED_1_CHANNEL    = 0       # 0 or 1
+#LED_1_STRIP      = ws.WS2811_STRIP_GRB
 
-
+LED_2_COUNT      = 42      # Number of LED pixels.
+LED_2_PIN        = 13      # GPIO pin connected to the pixels (must support PWM! GPIO 13 or 18 on RPi 3).
+LED_2_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
+LED_2_DMA        = 10      # DMA channel to use for generating signal (Between 1 and 14)
+LED_2_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
+LED_2_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+LED_2_CHANNEL    = 1       # 0 or 1
+#LED_2_STRIP      = ws.WS2811_STRIP_GRB
 
 
 class Controller():
 
     def __init__(self,event_end_start):
         self.event_end_start = event_end_start
-
-        self.strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
-        self.strip.begin()
+        #self.strip1 = Adafruit_NeoPixel(LED_1_COUNT, LED_1_PIN, LED_1_FREQ_HZ, LED_1_DMA, LED_1_INVERT, LED_1_BRIGHTNESS, LED_1_CHANNEL, LED_1_STRIP)
+        #self.strip2 = Adafruit_NeoPixel(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL, LED_2_STRIP)
+        #self.strip1.begin()
+        #self.strip2.begin()
 
 
 #        threading.Thread.__init__(self)
@@ -39,19 +46,22 @@ class Controller():
 
     def rainbow(self):
         for j in range(256):
-            for i in range(LED_COUNT):
-                #print(str(i) + "-" + str(wheel((i+j) & 255)))
-                #self.strip.setPixelColor(i, wheel((i+j) & 255))
-            #self.strip.show()
+            #for i in range(LED_1_COUNT):
+                #self.strip1.setPixelColor(i, wheel((i+j) & 255))
+                #self.strip2.setPixelColor(i, wheel((i+j) & 255))
+            #self.strip1.show()
+            #self.strip2.show()
             self.event_end_start.wait(timeout=0.02)
             if(self.event_end_start.is_set()):
                 break
 
     def rainbowCycle(self):
         for j in range(256):
-            for i in range(LED_COUNT):
-                #self.strip.setPixelColor(i, wheel((int(i * 256 / LED_COUNT) + j) & 255))
-            #self.strip.show()
+            #for i in range(LED_1_COUNT):
+                #self.strip1.setPixelColor(i, wheel((int(i * 256 / LED_1_COUNT) + j) & 255))
+                #self.strip2.setPixelColor(i, wheel((int(i * 256 / LED_1_COUNT) + j) & 255))
+            #self.strip1.show()
+            #self.strip2.show()
             self.event_end_start.wait(timeout=0.02)
             if(self.event_end_start.is_set()):
                 break
@@ -59,14 +69,25 @@ class Controller():
     def theaterChaseRainbow(self):
         for j in range(256):
             for q in range(3):
-                for i in range(0, LED_COUNT, 3):
-                    #self.strip.setPixelColor(i+q, wheel((i+j) % 255))
-                #self.strip.show()
+                #for i in range(0, LED_1_COUNT, 3):
+                    #self.strip1.setPixelColor(i+q, wheel((i+j) % 255))
+                    #self.strip2.setPixelColor(i+q, wheel((i+j) % 255))
+                #self.strip1.show()
+                #self.strip2.show()
                 self.event_end_start.wait(timeout=0.05)
-                if(self.event_end_start.is_set()):
+                if self.event_end_start.is_set():
                     break
-                for i in range(0, LED_COUNT, 3):
-                    #self.strip.setPixelColor(i+q, 0)
+                #for i in range(0, LED_1_COUNT, 3):
+                    #self.strip1.setPixelColor(i+q, 0)
+                    #self.strip2.setPixelColor(i+q, 0)
+
+    def fixedColor(self):
+        #for i in range(LED_1_COUNT):
+            #self.strip1.setPixelColor(Color(conf.color[0,conf.color[1],conf.color[2]]))
+            #self.strip2.setPixelColor(Color(conf.color[0,conf.color[1],conf.color[2]]))
+        #self.strip1.show()
+        #self.strip2.show()
+        self.event_end_start.wait()
 
     def run(self):
         print ('Start LEDS controller')
@@ -88,6 +109,8 @@ class Controller():
                     self.rainbowCycle()
                 elif(conf.current == "THEATER_CHASE_RAINBOW"):
                     self.theaterChaseRainbow()
+                elif (conf.current == "FIXED_COLOR"):
+                    self.fixedColor()
                 else:
                     self.rainbow()
                     self.rainbowCycle()
