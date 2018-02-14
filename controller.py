@@ -30,6 +30,8 @@ LED_2_INVERT     = False   # True to invert the signal (when using NPN transisto
 LED_2_CHANNEL    = 1       # 0 or 1
 #LED_2_STRIP      = ws.WS2811_STRIP_GRB
 
+class EndAnimException(Exception):
+    pass
 
 class Controller():
 
@@ -41,7 +43,6 @@ class Controller():
         #self.strip2.begin()
 
 
-#        threading.Thread.__init__(self)
 
     def reset(self):
         print("Reset LEDS")
@@ -55,7 +56,7 @@ class Controller():
             #self.strip2.show()
             self.event_end_start.wait(timeout=0.02)
             if(self.event_end_start.is_set()):
-                break
+                raise EndAnimException
 
     def rainbowCycle(self):
         for j in range(256):
@@ -66,7 +67,7 @@ class Controller():
             #self.strip2.show()
             self.event_end_start.wait(timeout=0.02)
             if(self.event_end_start.is_set()):
-                break
+                raise EndAnimException
 
     def theaterChaseRainbow(self):
         for j in range(256):
@@ -78,7 +79,7 @@ class Controller():
                 #self.strip2.show()
                 self.event_end_start.wait(timeout=0.05)
                 if self.event_end_start.is_set():
-                    break
+                    raise EndAnimException
                 #for i in range(0, LED_1_COUNT, 3):
                     #self.strip1.setPixelColor(i+q, 0)
                     #self.strip2.setPixelColor(i+q, 0)
@@ -105,18 +106,21 @@ class Controller():
 
 
             while conf.start:
-                if(conf.current == "RAINBOW"):
-                    self.rainbow()
-                elif(conf.current == "RAINBOW_CYCLE"):
-                    self.rainbowCycle()
-                elif(conf.current == "THEATER_CHASE_RAINBOW"):
-                    self.theaterChaseRainbow()
-                elif (conf.current == "FIXED_COLOR"):
-                    self.fixedColor()
-                else:
-                    self.rainbow()
-                    self.rainbowCycle()
-                    self.theaterChaseRainbow()
+                try:
+                    if(conf.current == "RAINBOW"):
+                        self.rainbow()
+                    elif(conf.current == "RAINBOW_CYCLE"):
+                        self.rainbowCycle()
+                    elif(conf.current == "THEATER_CHASE_RAINBOW"):
+                        self.theaterChaseRainbow()
+                    elif (conf.current == "FIXED_COLOR"):
+                        self.fixedColor()
+                    else:
+                        self.rainbow()
+                        self.rainbowCycle()
+                        self.theaterChaseRainbow()
+                except EndAnimException:
+                    pass
 
                 self.event_end_start.wait(timeout=2)
             self.event_end_start.clear()
