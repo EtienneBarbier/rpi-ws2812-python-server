@@ -1,13 +1,15 @@
 import time
 import conf
-#from neopixel import *
 import argparse
 import signal
 import sys
-
 import threading
 from utils_controller import *
 
+try:
+    import neopixel as np
+except ImportError:
+    import fake_neopixel as np
 
 # LED strip configuration:
 LED_1_COUNT      = 42      # Number of LED pixels.
