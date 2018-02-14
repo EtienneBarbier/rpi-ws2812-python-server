@@ -64,11 +64,14 @@ class Server(threading.Thread):
 
         @app.route('/setFixedColor', methods=['GET'])
         def setFixedColor():
-            conf.color[0] = request.args.get('r')
-            conf.color[1] = request.args.get('g')
-            conf.color[2] = request.args.get('b')
+            if request.args.get('r') != None:
+                conf.color[0] = request.args.get('r')
+            if request.args.get('g') != None:
+                conf.color[1] = request.args.get('g')
+            if request.args.get('b') != None:
+                conf.color[2] = request.args.get('b')
             conf.current = "FIXED_COLOR"
-            return redirect("/")
+            return conf.color
 
 
         print("Start Server")

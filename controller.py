@@ -43,7 +43,19 @@ class Controller():
         self.strip1.begin()
         self.strip2.begin()
 
+    def delay(self, timeout):
+        self.event_end_start.wait(timeout=timeout)
+        if (self.event_end_start.is_set()):
+            raise EndAnimException
 
+    def infinitedelay(self):
+        self.event_end_start.wait()
+        if (self.event_end_start.is_set()):
+            raise EndAnimException
+
+    def nodelay(self):
+        if (self.event_end_start.is_set()):
+            raise EndAnimException
 
     def reset(self):
         print("Reset LEDS")
@@ -55,9 +67,7 @@ class Controller():
                 self.strip2.setPixelColor(i, wheel((i+j) & 255))
             self.strip1.show()
             self.strip2.show()
-            self.event_end_start.wait(timeout=0.02)
-            if(self.event_end_start.is_set()):
-                raise EndAnimException
+            self.delay(timeout=0.02)
 
     def rainbowCycle(self):
         for j in range(256):
@@ -66,9 +76,7 @@ class Controller():
                 self.strip2.setPixelColor(i, wheel((int(i * 256 / LED_1_COUNT) + j) & 255))
             self.strip1.show()
             self.strip2.show()
-            self.event_end_start.wait(timeout=0.02)
-            if(self.event_end_start.is_set()):
-                raise EndAnimException
+            self.delay(timeout=0.02)
 
     def theaterChaseRainbow(self):
         for j in range(256):
@@ -78,12 +86,11 @@ class Controller():
                     self.strip2.setPixelColor(i+q, wheel((i+j) % 255))
                 self.strip1.show()
                 self.strip2.show()
-                self.event_end_start.wait(timeout=0.05)
-                if self.event_end_start.is_set():
-                    raise EndAnimException
+                self.delay(timeout=0.05)
                 for i in range(0, LED_1_COUNT, 3):
                     self.strip1.setPixelColor(i+q, 0)
                     self.strip2.setPixelColor(i+q, 0)
+                    self.nodelay()
 
     def fixedColor(self):
         for i in range(LED_1_COUNT):
@@ -91,7 +98,7 @@ class Controller():
             self.strip2.setPixelColor(Color(conf.color[0,conf.color[1],conf.color[2]]))
         self.strip1.show()
         self.strip2.show()
-        self.event_end_start.wait()
+        self.infinitedelay()
 
     def run(self):
         print ('Start LEDS controller')
