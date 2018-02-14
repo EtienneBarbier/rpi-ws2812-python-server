@@ -20,7 +20,7 @@ LED_1_DMA        = 10      # DMA channel to use for generating signal (Between 1
 LED_1_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_1_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_1_CHANNEL    = 0       # 0 or 1
-LED_1_STRIP      = ws.WS2811_STRIP_GRB
+LED_1_STRIP      = np.ws.WS2811_STRIP_GRB
 
 LED_2_COUNT      = 42      # Number of LED pixels.
 LED_2_PIN        = 13      # GPIO pin connected to the pixels (must support PWM! GPIO 13 or 18 on RPi 3).
@@ -29,7 +29,7 @@ LED_2_DMA        = 10      # DMA channel to use for generating signal (Between 1
 LED_2_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_2_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_2_CHANNEL    = 1       # 0 or 1
-LED_2_STRIP      = ws.WS2811_STRIP_GRB
+LED_2_STRIP      = np.ws.WS2811_STRIP_GRB
 
 class EndAnimException(Exception):
     pass
@@ -94,8 +94,8 @@ class Controller():
 
     def fixedColor(self):
         for i in range(LED_1_COUNT):
-            self.strip1.setPixelColor(Color(conf.color[0,conf.color[1],conf.color[2]]))
-            self.strip2.setPixelColor(Color(conf.color[0,conf.color[1],conf.color[2]]))
+            self.strip1.setPixelColor(i,Color(conf.color[0],conf.color[1],conf.color[2]))
+            self.strip2.setPixelColor(i,Color(conf.color[0],conf.color[1],conf.color[2]))
         self.strip1.show()
         self.strip2.show()
         self.infinitedelay()
