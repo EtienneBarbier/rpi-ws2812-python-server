@@ -10,7 +10,6 @@ try:
     import neopixel as np
 except ImportError:
     import fake_neopixel as np
-    import fake_ws as ws
 
 # LED strip configuration:
 LED_1_COUNT      = 42      # Number of LED pixels.
