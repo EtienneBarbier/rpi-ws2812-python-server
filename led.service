@@ -1,0 +1,13 @@
+[Unit]
+Description=Leds for snowboard
+
+[Service]
+Type=simple
+User=led
+
+ExecStart=/home/led/rpi-ws2812-python-server/start.sh
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
