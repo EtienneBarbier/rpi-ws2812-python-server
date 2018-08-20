@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import conf
+# Init all config variables
+conf.init()
+
 import controller
 import threading
 import server
-
+import optparse
 
 try:
-    # Init all config variables
-    conf.init()
-
     # Create events
     event_end_start = threading.Event()
     event_pause_run = threading.Event()

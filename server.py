@@ -1,13 +1,26 @@
 import conf
 import threading
-from flask import Flask, request, redirect, render_template
+import logging
+from flask import Flask, request, redirect, render_template, jsonify
 from werkzeug.serving import make_server
 
+
+def set_debug():
+    if conf.debug_serv == 0:
+        log = logging.getLogger('werkzeug')
+        log.setLevel(logging.ERROR)
+
+def apply_change(self):
+    if conf.start:
+        conf.restart = True
+        conf.start = False
+        self.event_end_start.set()
 
 
 class Server(threading.Thread):
 
     def __init__(self, event_end_start):
+        set_debug()
         self.event_end_start = event_end_start
         threading.Thread.__init__(self)
         global app
@@ -15,7 +28,6 @@ class Server(threading.Thread):
         self.srv = make_server('127.0.0.1', 5000, app)
 
     def run(self):
-
         @app.route('/')
         def default_page():
             return render_template('index.html')
@@ -25,7 +37,7 @@ class Server(threading.Thread):
             if not conf.start:
                 conf.start = True
                 self.event_end_start.set()
-            return redirect("/")
+            return 'start ok',200
 
         @app.route('/restart')
         def restart():
@@ -33,34 +45,45 @@ class Server(threading.Thread):
                 conf.restart = True
                 conf.start = False
                 self.event_end_start.set()
-            return redirect("/")
+            return 'restart ok',200
 
         @app.route('/stop')
         def stop():
             if conf.start:
                 conf.start = False
                 self.event_end_start.set()
-            return redirect("/")
+            return 'stop ok',200
+
+        @app.route('/state')
+        def state():
+            state = "stopped"
+            if conf.start:
+                state = "started"
+            return jsonify({'state': state, 'program': conf.current}),200
 
         @app.route('/setTheaterChaseRainbow')
         def setTheaterChaseRainbow():
             conf.current = "THEATER_CHASE_RAINBOW"
-            return redirect("/")
+            apply_change(self)
+            return 'setRainbow ok',200
 
         @app.route('/setRainbow')
         def setRainbow():
             conf.current = "RAINBOW"
-            return redirect("/")
+            apply_change(self)
+            return 'setRainbow ok',200
 
         @app.route('/setRainbowCycle')
         def setRainbowCycle():
             conf.current = "RAINBOW_CYCLE"
-            return redirect("/")
+            apply_change(self)
+            return 'setRainbowCycle ok',200
 
         @app.route('/setAll')
         def setAll():
             conf.current = "ALL"
-            return redirect("/")
+            apply_change(self)
+            return 'setAll ok',200
 
         @app.route('/setFixedColor', methods=['GET'])
         def setFixedColor():
@@ -71,10 +94,11 @@ class Server(threading.Thread):
             if request.args.get('b') != None:
                 conf.color[2] = int(request.args.get('b'))
             conf.current = "FIXED_COLOR"
-            return redirect("/")
+            apply_change(self)
+            return 'setFixedColor ok',200
 
 
-        print("Start Server")
+        print("#### Start Web Server ####")
         self.srv.serve_forever()
 
     def shutdown(self):

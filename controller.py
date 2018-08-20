@@ -9,7 +9,8 @@ from utils_controller import *
 try:
     import neopixel as np
 except ImportError:
-    import fake_neopixel as np
+    import fake_neopixel as np # If we don't are under raspberry than set debuf true
+    conf.debug_cont = 1;
 
 # LED strip configuration:
 LED_1_COUNT      = 42      # Number of LED pixels.
@@ -32,6 +33,9 @@ LED_2_STRIP      = np.ws.WS2811_STRIP_GRB
 
 class EndAnimException(Exception):
     pass
+
+def debug(message):
+    print("Led : " + message)
 
 class Controller():
 
@@ -57,9 +61,12 @@ class Controller():
             raise EndAnimException
 
     def reset(self):
-        print("Reset LEDS")
+        if conf.debug_cont:
+            debug("Reset LEDS")
 
     def rainbow(self):
+        if conf.debug_cont:
+            debug("Set rainbow")
         for j in range(256):
             for i in range(LED_1_COUNT):
                 self.strip1.setPixelColor(i, wheel((i+j) & 255))
@@ -69,6 +76,8 @@ class Controller():
             self.delay(timeout=0.02)
 
     def rainbowCycle(self):
+        if conf.debug_cont:
+            debug("Set rainbowCycle")
         for j in range(256):
             for i in range(LED_1_COUNT):
                 self.strip1.setPixelColor(i, wheel((int(i * 256 / LED_1_COUNT) + j) & 255))
@@ -78,6 +87,8 @@ class Controller():
             self.delay(timeout=0.02)
 
     def theaterChaseRainbow(self):
+        if conf.debug_cont:
+            debug("Set theaterChaseRainbow")
         for j in range(256):
             for q in range(3):
                 for i in range(0, LED_1_COUNT, 3):
@@ -92,6 +103,8 @@ class Controller():
                     self.nodelay()
 
     def fixedColor(self):
+        if conf.debug_cont:
+            debug("Set fixedColor")
         for i in range(LED_1_COUNT):
             self.strip1.setPixelColor(i,Color(conf.color[0],conf.color[1],conf.color[2]))
             self.strip2.setPixelColor(i,Color(conf.color[0],conf.color[1],conf.color[2]))
@@ -100,7 +113,8 @@ class Controller():
         self.infinitedelay()
 
     def run(self):
-        print ('Start LEDS controller')
+        if conf.debug_cont:
+            print('#### Start LEDS controller ####')
         while True:
             if conf.restart:
                 self.event_end_start.clear()
@@ -127,9 +141,9 @@ class Controller():
                         self.rainbowCycle()
                         self.theaterChaseRainbow()
                 except EndAnimException:
+                    if conf.debug_cont:
+                        print("Stop Animation")
                     pass
 
                 self.event_end_start.wait(timeout=2)
             self.event_end_start.clear()
-
-            print("Out of loop")
