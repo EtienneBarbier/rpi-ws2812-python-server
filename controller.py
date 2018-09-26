@@ -104,7 +104,7 @@ class Controller():
 
     def fixedColor(self):
         if conf.debug_cont:
-            debug("Set fixedColor")
+            debug("Set Color "+ str(conf.color[0]) + " " + str(conf.color[1])+ " " + str(conf.color[2]))
         for i in range(LED_1_COUNT):
             self.strip1.setPixelColor(i,Color(conf.color[0],conf.color[1],conf.color[2]))
             self.strip2.setPixelColor(i,Color(conf.color[0],conf.color[1],conf.color[2]))

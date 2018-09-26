@@ -5,6 +5,8 @@ def init():
     debug_serv = 0
     global brightness
     brightness = 255
+    global speed
+    speed = 255
     global start
     start = False
     global restart

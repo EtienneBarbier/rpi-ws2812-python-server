@@ -99,7 +99,7 @@ class Server(threading.Thread):
                 return Response(response=None,status=404,mimetype="application/json")
 
         @app.route('/color', methods=['GET'])
-        def setFixedColor():
+        def setColor():
             if request.args.get('red') != None:
                 conf.color[0] = int(request.args.get('red'))
             if request.args.get('green') != None:
