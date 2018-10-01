@@ -1,5 +1,6 @@
 import time
 import conf
+from lib import *
 import argparse
 import signal
 import sys
@@ -104,10 +105,10 @@ class Controller():
 
     def fixedColor(self):
         if conf.debug_cont:
-            debug("Set Color "+ str(conf.color[0]) + " " + str(conf.color[1])+ " " + str(conf.color[2]))
+            debug("Set Color "+ str(br_color(conf.color[0])) + " " + str(br_color(conf.color[1]))+ " " + str(br_color(conf.color[2])))
         for i in range(LED_1_COUNT):
-            self.strip1.setPixelColor(i,Color(conf.color[0],conf.color[1],conf.color[2]))
-            self.strip2.setPixelColor(i,Color(conf.color[0],conf.color[1],conf.color[2]))
+            self.strip1.setPixelColor(i,Color(br_color(conf.color[0]),br_color(conf.color[1]),br_color(conf.color[2])))
+            self.strip2.setPixelColor(i,Color(br_color(conf.color[0]),br_color(conf.color[1]),br_color(conf.color[2])))
         self.strip1.show()
         self.strip2.show()
         self.infinitedelay()

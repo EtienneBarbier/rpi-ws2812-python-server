@@ -68,12 +68,29 @@ class Server(threading.Thread):
                 return Response(response=None,status=404,mimetype="application/json")
 
 
+        @app.route('/settings', methods=['GET'])
+        def settings():
+            print("settings")
+            if request.args.get('brightness') != None:
+                arg_brightness = float(request.args.get('brightness'))
+                if arg_brightness <= 100 and arg_brightness >= 0:
+                    conf.brightness = arg_brightness;
+                    if conf.current == "FIXED_COLOR":
+                        apply_change(self);
+                else:
+                    return Response(response=None,status=404,mimetype="application/json")
+                return Response(response=None,status=200,mimetype="application/json")
+            else:
+                return Response(response=None,status=404,mimetype="application/json")
+
+
         @app.route('/state')
         def state():
             state = "stopped"
             if conf.start:
                 state = "started"
-            return Response(response={'state': state, 'program': conf.current},status=200,mimetype="application/json")
+            return jsonify(state=state,program=conf.current);
+            # return Response(response=response,status=200,mimetype="application/json")
 
 
         @app.route('/annimation', methods=['GET'])
