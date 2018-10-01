@@ -51,10 +51,10 @@ class Server(threading.Thread):
         def default_page():
             return render_template('index.html')
 
-        @app.route('/action', methods=['GET'])
+        @app.route('/action', methods=['POST'])
         def action():
-            if request.args.get('power') != None:
-                arg_power = request.args.get('power')
+            if request.get_json().get("power") != None:
+                arg_power = request.get_json().get("power");
                 if arg_power == 'start':
                     start_led(self)
                 elif arg_power == 'restart':
@@ -68,28 +68,33 @@ class Server(threading.Thread):
                 return Response(response=None,status=404,mimetype="application/json")
 
 
-        @app.route('/settings', methods=['GET'])
+        @app.route('/settings', methods=['POST','GET'])
         def settings():
-            print("settings")
-            if request.args.get('brightness') != None:
-                arg_brightness = float(request.args.get('brightness'))
-                if arg_brightness <= 100 and arg_brightness >= 0:
-                    conf.brightness = arg_brightness;
-                    if conf.current == "FIXED_COLOR":
-                        apply_change(self);
+            if request.method == 'POST':
+                if request.get_json().get('brightness') != None:
+                    arg_brightness = float(request.get_json().get('brightness'))
+                    if arg_brightness <= 1 and arg_brightness >= 0:
+                        print("brightness " + str(arg_brightness));
+                        conf.brightness = arg_brightness;
+                        if conf.current == "FIXED_COLOR":
+                            apply_change(self);
+                    else:
+                        return Response(response=None,status=404,mimetype="application/json")
+                    return Response(response=None,status=200,mimetype="application/json")
+                elif request.get_json().get('speed') != None:
                 else:
                     return Response(response=None,status=404,mimetype="application/json")
-                return Response(response=None,status=200,mimetype="application/json")
-            else:
-                return Response(response=None,status=404,mimetype="application/json")
+
+            elif request.method == 'GET':
+                return jsonify(brightness=conf.brightness,speed=conf.speed);
 
 
         @app.route('/state')
         def state():
-            state = "stopped"
+            power = "stopped"
             if conf.start:
-                state = "started"
-            return jsonify(state=state,program=conf.current);
+                power = "started"
+            return jsonify(power=power,program=conf.current);
             # return Response(response=response,status=200,mimetype="application/json")
 
 
