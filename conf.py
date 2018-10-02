@@ -6,7 +6,7 @@ def init():
     global brightness
     brightness = 1
     global speed
-    speed = 255
+    speed = 1
     global start
     start = False
     global restart
@@ -15,3 +15,5 @@ def init():
     current = "RAINBOW"
     global color
     color = [255,255,255]
+    global locked_timeout
+    locked_timeout = False

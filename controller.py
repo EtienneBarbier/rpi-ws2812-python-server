@@ -47,15 +47,26 @@ class Controller():
         self.strip1.begin()
         self.strip2.begin()
 
-    def delay(self, timeout):
-        self.event_end_start.wait(timeout=timeout)
-        if (self.event_end_start.is_set()):
-            raise EndAnimException
-
     def infinitedelay(self):
         self.event_end_start.wait()
-        if (self.event_end_start.is_set()):
+        if (self.event_end_start.is_set() and not conf.locked_timeout):
             raise EndAnimException
+        else:
+            self.event_end_start.clear()
+            conf.locked_timeout = False;
+
+    def delay(self, timeout):
+        if conf.speed == -1:
+            self.infinitedelay();
+        else:
+            tmp_timeout = conf.speed * timeout;
+            self.event_end_start.wait(timeout=tmp_timeout)
+            if (self.event_end_start.is_set() and not conf.locked_timeout):
+                raise EndAnimException
+            else:
+                self.event_end_start.clear()
+                conf.locked_timeout = False;
+
 
     def nodelay(self):
         if (self.event_end_start.is_set()):

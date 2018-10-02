@@ -1,5 +1,6 @@
 import conf
 import threading
+import math
 import logging
 from flask import Flask, request, redirect, render_template, jsonify, Response
 from werkzeug.serving import make_server
@@ -16,6 +17,11 @@ def apply_change(self):
     if conf.start:
         conf.restart = True
         conf.start = False
+        self.event_end_start.set()
+
+def unlock_system_long_timeout(self):
+    if conf.start:
+        conf.locked_timeout = True;
         self.event_end_start.set()
 
 def start_led(self):
@@ -78,15 +84,25 @@ class Server(threading.Thread):
                         conf.brightness = arg_brightness;
                         if conf.current == "FIXED_COLOR":
                             apply_change(self);
+                        return Response(response=None,status=200,mimetype="application/json")
                     else:
                         return Response(response=None,status=404,mimetype="application/json")
-                    return Response(response=None,status=200,mimetype="application/json")
-                elif request.get_json().get('speed') != None:
-                else:
-                    return Response(response=None,status=404,mimetype="application/json")
-
+                if request.get_json().get('speed') != None:
+                    arg_speed = float(request.get_json().get('speed'))
+                    if arg_speed <= 100 and arg_speed > -100:
+                        if conf.speed >= 3 or conf.speed == -1:
+                            unlock_system_long_timeout(self);
+                        conf.speed = math.exp((-arg_speed)/16);
+                        return Response(response=None,status=200,mimetype="application/json")
+                    if arg_speed == -100:
+                        conf.speed = -1; #Annimation is in pause
+                        return Response(response=None,status=200,mimetype="application/json")
+                    else:
+                        return Response(response=None,status=404,mimetype="application/json")
+                return Response(response=None,status=404,mimetype="application/json")
             elif request.method == 'GET':
-                return jsonify(brightness=conf.brightness,speed=conf.speed);
+                speed = -(math.log(conf.speed)*16);
+                return jsonify(brightness=conf.brightness,speed=speed,color=conf.color);
 
 
         @app.route('/state')
