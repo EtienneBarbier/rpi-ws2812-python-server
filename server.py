@@ -83,7 +83,7 @@ class Server(threading.Thread):
                     if arg_brightness <= 1 and arg_brightness >= 0:
                         print("brightness " + str(arg_brightness));
                         shared.brightness = arg_brightness;
-                        shared.controller.setBrightness(255*arg_brightness)
+                        shared.controller.setBrightness(arg_brightness)
                         if shared.current == "FIXED_COLOR":
                             apply_change(self);
                         return Response(response=None,status=200,mimetype="application/json")

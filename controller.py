@@ -48,8 +48,8 @@ class Controller():
         self._strip2.begin()
 
     def setBrightness(self,brighness):
-        self._strip1.setBrightness(brighness);
-        self._strip2.setBrightness(brighness);
+        self._strip1.setBrightness(int(255*brighness));
+        self._strip2.setBrightness(int(255*brighness));
         self._strip1.show();
         self._strip2.show();
 
@@ -94,10 +94,6 @@ class Controller():
             self._delay(timeout=0.02)
 
     def _rainbowCycle(self):
-        self._strip1.setBrightness(20)
-        self._strip2.setBrightness(20)
-        self._strip1.show()
-        self._strip2.show()
         if conf.debug_cont:
             debug("Set rainbowCycle")
         for j in range(256):
