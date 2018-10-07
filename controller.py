@@ -151,7 +151,7 @@ class Controller():
 
             while shared.start:
                 try:
-                    if(shared.current == "_rainbow"):
+                    if(shared.current == "RAINBOW"):
                         self._rainbow()
                     elif(shared.current == "RAINBOW_CYCLE"):
                         self._rainbowCycle()
