@@ -1,5 +1,3 @@
-import fake_ws as ws
-
 class Adafruit_NeoPixel(object):
     def __init__(self, num, pin, freq_hz=800000, dma=5, invert=False,
                  brightness=255, channel=0, strip_type=0):
@@ -21,6 +19,7 @@ class Adafruit_NeoPixel(object):
         pass
 
     def setBrightness(self, brightness):
+        print("setBri")
         pass
 
     def getBrightness(self):

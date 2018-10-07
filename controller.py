@@ -21,7 +21,7 @@ LED_1_DMA        = 10      # DMA channel to use for generating signal (Between 1
 LED_1_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_1_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_1_CHANNEL    = 0       # 0 or 1
-LED_1_STRIP      = np.ws.WS2811_STRIP_GRB
+# LED_1_STRIP      = np.ws.WS2811_STRIP_GRB
 
 LED_2_COUNT      = 42      # Number of LED pixels.
 LED_2_PIN        = 13      # GPIO pin connected to the pixels (must support PWM! GPIO 13 or 18 on RPi 3).
@@ -30,7 +30,7 @@ LED_2_DMA        = 10      # DMA channel to use for generating signal (Between 1
 LED_2_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_2_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_2_CHANNEL    = 1       # 0 or 1
-LED_2_STRIP      = np.ws.WS2811_STRIP_GRB
+# LED_2_STRIP      = np.ws.WS2811_STRIP_GRB
 
 class EndAnimException(Exception):
     pass
@@ -41,121 +41,136 @@ def debug(message):
 class Controller():
 
     def __init__(self,event_end_start):
-        self.event_end_start = event_end_start
-        self.strip1 = np.Adafruit_NeoPixel(LED_1_COUNT, LED_1_PIN, LED_1_FREQ_HZ, LED_1_DMA, LED_1_INVERT, LED_1_BRIGHTNESS, LED_1_CHANNEL, LED_1_STRIP)
-        self.strip2 = np.Adafruit_NeoPixel(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL, LED_2_STRIP)
-        self.strip1.begin()
-        self.strip2.begin()
+        self._event_end_start = event_end_start
+        self._strip1 = np.Adafruit_NeoPixel(LED_1_COUNT, LED_1_PIN, LED_1_FREQ_HZ, LED_1_DMA, LED_1_INVERT, LED_1_BRIGHTNESS, LED_1_CHANNEL)
+        self._strip2 = np.Adafruit_NeoPixel(LED_2_COUNT, LED_2_PIN, LED_2_FREQ_HZ, LED_2_DMA, LED_2_INVERT, LED_2_BRIGHTNESS, LED_2_CHANNEL)
+        self._strip1.begin()
+        self._strip2.begin()
 
-    def infinitedelay(self):
-        self.event_end_start.wait()
-        if (self.event_end_start.is_set() and not conf.locked_timeout):
+    def setBrightness(self,brighness):
+        self._strip1.setBrightness(brighness);
+        self._strip2.setBrightness(brighness);
+        self._strip1.show();
+        self._strip2.show();
+
+    def _infinitedelay(self):
+        self._event_end_start.wait()
+        if (self._event_end_start.is_set() and not shared.locked_timeout):
             raise EndAnimException
         else:
-            self.event_end_start.clear()
-            conf.locked_timeout = False;
+            self._event_end_start.clear()
+            shared.locked_timeout = False;
 
-    def delay(self, timeout):
-        if conf.speed == -1:
-            self.infinitedelay();
+    def _delay(self, timeout):
+        if shared.speed == -1:
+            self._infinitedelay();
         else:
-            tmp_timeout = conf.speed * timeout;
-            self.event_end_start.wait(timeout=tmp_timeout)
-            if (self.event_end_start.is_set() and not conf.locked_timeout):
+            tmp_timeout = shared.speed * timeout;
+            self._event_end_start.wait(timeout=tmp_timeout)
+            if (self._event_end_start.is_set() and not shared.locked_timeout):
                 raise EndAnimException
             else:
-                self.event_end_start.clear()
-                conf.locked_timeout = False;
+                self._event_end_start.clear()
+                shared.locked_timeout = False;
 
 
-    def nodelay(self):
-        if (self.event_end_start.is_set()):
+    def _nodelay(self):
+        if (self._event_end_start.is_set()):
             raise EndAnimException
 
     def reset(self):
         if conf.debug_cont:
             debug("Reset LEDS")
 
-    def rainbow(self):
+    def _rainbow(self):
         if conf.debug_cont:
             debug("Set rainbow")
         for j in range(256):
             for i in range(LED_1_COUNT):
-                self.strip1.setPixelColor(i, wheel((i+j) & 255))
-                self.strip2.setPixelColor(i, wheel((i+j) & 255))
-            self.strip1.show()
-            self.strip2.show()
-            self.delay(timeout=0.02)
+                self._strip1.setPixelColor(i, wheel((i+j) & 255))
+                self._strip2.setPixelColor(i, wheel((i+j) & 255))
+            self._strip1.show()
+            self._strip2.show()
+            self._delay(timeout=0.02)
 
-    def rainbowCycle(self):
+    def _rainbowCycle(self):
+        self._strip1.setBrightness(20)
+        self._strip2.setBrightness(20)
+        self._strip1.show()
+        self._strip2.show()
         if conf.debug_cont:
             debug("Set rainbowCycle")
         for j in range(256):
             for i in range(LED_1_COUNT):
-                self.strip1.setPixelColor(i, wheel((int(i * 256 / LED_1_COUNT) + j) & 255))
-                self.strip2.setPixelColor(i, wheel((int(i * 256 / LED_1_COUNT) + j) & 255))
-            self.strip1.show()
-            self.strip2.show()
-            self.delay(timeout=0.02)
+                self._strip1.setPixelColor(i, wheel((int(i * 256 / LED_1_COUNT) + j) & 255))
+                self._strip2.setPixelColor(i, wheel((int(i * 256 / LED_1_COUNT) + j) & 255))
+            self._strip1.show()
+            self._strip2.show()
+            self._delay(timeout=0.02)
 
-    def theaterChaseRainbow(self):
+    def _theaterChaseRainbow(self):
         if conf.debug_cont:
             debug("Set theaterChaseRainbow")
         for j in range(256):
             for q in range(3):
                 for i in range(0, LED_1_COUNT, 3):
-                    self.strip1.setPixelColor(i+q, wheel((i+j) % 255))
-                    self.strip2.setPixelColor(i+q, wheel((i+j) % 255))
-                self.strip1.show()
-                self.strip2.show()
-                self.delay(timeout=0.05)
+                    self._strip1.setPixelColor(i+q, wheel((i+j) % 255))
+                    self._strip2.setPixelColor(i+q, wheel((i+j) % 255))
+                self._strip1.show()
+                self._strip2.show()
+                self._delay(timeout=0.05)
                 for i in range(0, LED_1_COUNT, 3):
-                    self.strip1.setPixelColor(i+q, 0)
-                    self.strip2.setPixelColor(i+q, 0)
-                    self.nodelay()
+                    self._strip1.setPixelColor(i+q, 0)
+                    self._strip2.setPixelColor(i+q, 0)
+                    self._nodelay()
 
-    def fixedColor(self):
-        if conf.debug_cont:
-            debug("Set Color "+ str(br_color(conf.color[0])) + " " + str(br_color(conf.color[1]))+ " " + str(br_color(conf.color[2])))
+    def _setColor(self,color):
         for i in range(LED_1_COUNT):
-            self.strip1.setPixelColor(i,Color(br_color(conf.color[0]),br_color(conf.color[1]),br_color(conf.color[2])))
-            self.strip2.setPixelColor(i,Color(br_color(conf.color[0]),br_color(conf.color[1]),br_color(conf.color[2])))
-        self.strip1.show()
-        self.strip2.show()
-        self.infinitedelay()
+            self._strip1.setPixelColor(i,Color(color[0],color[1],color[2]))
+            self._strip2.setPixelColor(i,Color(color[0],color[1],color[2]))
+        self._strip1.show()
+        self._strip2.show()
+
+    def _fixedColor(self):
+        if conf.debug_cont:
+            debug("Set Color "+ str(shared.color[0]) + " " + str(shared.color[1])+ " " + str(shared.color[2]))
+        self._setColor(shared.color);
+        self._infinitedelay()
+
 
     def run(self):
         if conf.debug_cont:
             print('#### Start LEDS controller ####')
         while True:
-            if conf.restart:
-                self.event_end_start.clear()
-                conf.restart = False
-                conf.start = True
+            if shared.restart:
+                self._event_end_start.clear()
+                shared.restart = False
+                shared.start = True
 
-            while not conf.start:
-                self.event_end_start.wait()
-            self.event_end_start.clear()
+            while not shared.start:
+                self._setColor([0,0,0]);
+                self._event_end_start.wait()
+            self._event_end_start.clear()
 
 
-            while conf.start:
+            while shared.start:
                 try:
-                    if(conf.current == "RAINBOW"):
-                        self.rainbow()
-                    elif(conf.current == "RAINBOW_CYCLE"):
-                        self.rainbowCycle()
-                    elif(conf.current == "THEATER_CHASE_RAINBOW"):
-                        self.theaterChaseRainbow()
-                    elif (conf.current == "FIXED_COLOR"):
-                        self.fixedColor()
+                    if(shared.current == "_rainbow"):
+                        self._rainbow()
+                    elif(shared.current == "RAINBOW_CYCLE"):
+                        self._rainbowCycle()
+                    elif(shared.current == "THEATER_CHASE_RAINBOW"):
+                        self._theaterChaseRainbow()
+                    elif (shared.current == "FIXED_COLOR"):
+                        self._fixedColor()
                     else:
-                        self.rainbow()
-                        self.rainbowCycle()
-                        self.theaterChaseRainbow()
+                        self._rainbow()
+                        self._rainbowCycle()
+                        self._theaterChaseRainbow()
                 except EndAnimException:
                     if conf.debug_cont:
                         print("Stop Animation")
                     pass
 
-                self.event_end_start.wait(timeout=2)
-            self.event_end_start.clear()
+                self._event_end_start.wait(timeout=0)
+            self._event_end_start.clear()

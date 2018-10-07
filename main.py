@@ -9,22 +9,26 @@ import threading
 import server
 import optparse
 
+import shared
+shared.init()
+
+
 try:
     # Create events
     event_end_start = threading.Event()
     event_pause_run = threading.Event()
 
     # Create & Start flask server (thread)
-    server = server.Server(event_end_start)
-    server.start()
+    shared.server = server.Server(event_end_start)
+    shared.server.start()
 
     # Create &  Start LED controller
-    controller = controller.Controller(event_end_start)
-    controller.run()
+    shared.controller = controller.Controller(event_end_start)
+    shared.controller.run()
 
 
-    server.join()
+    shared.server.join()
 except KeyboardInterrupt:
     print("\nStopping program")
-    controller.reset()
-    server.shutdown()
+    shared.controller.reset()
+    shared.server.shutdown()
