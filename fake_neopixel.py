@@ -19,7 +19,6 @@ class Adafruit_NeoPixel(object):
         pass
 
     def setBrightness(self, brightness):
-        print("setBri")
         pass
 
     def getBrightness(self):

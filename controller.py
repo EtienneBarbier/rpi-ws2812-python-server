@@ -61,17 +61,41 @@ class Controller():
             self._event_end_start.clear()
             shared.locked_timeout = False;
 
+    def _change_delay(self, timeout, first_timeout):
+        start = time.time()
+        print("timeout")
+        print(timeout)
+        self._event_end_start.wait(timeout=timeout)
+        if (self._event_end_start.is_set() and not shared.locked_timeout):
+            raise EndAnimException
+        elif shared.locked_timeout:
+            stop = time.time()
+            remind = timeout - (stop - start)
+            self._event_end_start.clear()
+            shared.locked_timeout = False;
+            new_time = (shared.speed * first_timeout)-(remind);
+            if new_time >= 0:
+                self._change_delay(new_time, first_timeout)
+
     def _delay(self, timeout):
         if shared.speed == -1:
             self._infinitedelay();
         else:
             tmp_timeout = shared.speed * timeout;
+            print("tmp_timeout")
+            print(tmp_timeout)
+            start = time.time()
             self._event_end_start.wait(timeout=tmp_timeout)
             if (self._event_end_start.is_set() and not shared.locked_timeout):
                 raise EndAnimException
-            else:
+            elif shared.locked_timeout:
+                stop = time.time()
+                remind = tmp_timeout - (stop - start)
                 self._event_end_start.clear()
                 shared.locked_timeout = False;
+                new_time = (shared.speed * timeout)-(remind);
+                if new_time >= 0:
+                    self._change_delay(new_time, timeout)
 
 
     def _nodelay(self):
