@@ -102,7 +102,10 @@ class Server(threading.Thread):
                 return Response(response=None,status=404,mimetype="application/json")
             elif request.method == 'GET':
                 speed = -(math.log(shared.speed)*16);
-                return jsonify(brightness=shared.brightness,speed=speed,color=shared.color);
+                power = "stopped"
+                if shared.start:
+                    power = "started"
+                return jsonify(power=power,program=shared.current,brightness=shared.brightness,speed=speed,color=shared.color);
 
 
         @app.route('/state')
