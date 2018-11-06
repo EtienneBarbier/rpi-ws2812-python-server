@@ -130,6 +130,9 @@ class Server(threading.Thread):
                 elif arg_annimation == 'rainbow_cycle':
                     shared.current = "RAINBOW_CYCLE"
                     apply_change(self)
+                elif arg_annimation == 'rainbow_random':
+                    shared.current = "RAINBOW_RANDOM"
+                    apply_change(self)
                 elif arg_annimation == 'all':
                     shared.current = "ALL"
                     apply_change(self)

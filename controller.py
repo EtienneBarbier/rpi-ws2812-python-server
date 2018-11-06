@@ -5,6 +5,7 @@ import argparse
 import signal
 import sys
 import threading
+import random
 from utils_controller import *
 
 try:
@@ -106,8 +107,28 @@ class Controller():
             debug("Reset LEDS")
 
     def _rainbowRandom(self):
-        if conf.debug_conf:
+        if conf.debug_cont:
             debug("Set rainbowRandom")
+        led_1_tab = [[0,0,0,0]]*LED_1_COUNT;
+        led_2_tab = [[0,0,0,0]]*LED_2_COUNT;
+        rand1 = random.randrange(0, LED_1_COUNT-1)
+        rand2 = random.randrange(0, LED_2_COUNT-1)
+        led_1_tab[rand1][0] = 1;
+        led_1_tab[rand1][1] = random.randrange(0, 255);
+        led_1_tab[rand1][2] = random.randrange(0, 255);
+        led_1_tab[rand1][3] = random.randrange(0, 255);
+        led_2_tab[rand2][0] = 1;
+        led_2_tab[rand2][1] = random.randrange(0, 255);
+        led_2_tab[rand2][2] = random.randrange(0, 255);
+        led_2_tab[rand2][3] = random.randrange(0, 255);
+        for i in range(LED_1_COUNT):
+            self._strip1.setPixelColor(i,Color(int(led_1_tab[i][0]*led_1_tab[i][1]),int(led_1_tab[i][0]*led_1_tab[i][2]),int(led_1_tab[i][0]*led_1_tab[i][3])))
+            self._strip2.setPixelColor(i,Color(int(led_2_tab[i][0]*led_2_tab[i][1]),int(led_2_tab[i][0]*led_2_tab[i][2]),int(led_2_tab[i][0]*led_2_tab[i][3])))
+            if led_1_tab[i][0] > 0:
+                led_1_tab[i][0] -= 0.1;
+            if led_2_tab[i][0] > 0:
+                led_2_tab[i][0] -= 0.1;
+        self._delay(timeout=0.3)
 
 
     def _rainbow(self):
@@ -187,6 +208,8 @@ class Controller():
                         self._theaterChaseRainbow()
                     elif (shared.current == "FIXED_COLOR"):
                         self._fixedColor()
+                    elif (shared.current == "RAINBOW_RANDOM"):
+                        self._rainbowRandom()
                     else:
                         self._rainbow()
                         self._rainbowCycle()
