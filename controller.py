@@ -105,6 +105,11 @@ class Controller():
         if conf.debug_cont:
             debug("Reset LEDS")
 
+    def _rainbowRandom(self):
+        if conf.debug_conf:
+            debug("Set rainbowRandom")
+
+
     def _rainbow(self):
         if conf.debug_cont:
             debug("Set rainbow")
