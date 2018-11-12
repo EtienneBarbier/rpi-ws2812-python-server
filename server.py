@@ -117,30 +117,33 @@ class Server(threading.Thread):
             # return Response(response=response,status=200,mimetype="application/json")
 
 
-        @app.route('/annimation', methods=['GET'])
+        @app.route('/annimation', methods=['POST','GET'])
         def annimation():
-            if request.args.get('id') != None:
-                arg_annimation = request.args.get('id')
-                if arg_annimation == 'theater_chase_rainbow':
-                    shared.current = "THEATER_CHASE_RAINBOW"
-                    apply_change(self)
-                elif arg_annimation == 'rainbow':
-                    shared.current = "RAINBOW"
-                    apply_change(self)
-                elif arg_annimation == 'rainbow_cycle':
-                    shared.current = "RAINBOW_CYCLE"
-                    apply_change(self)
-                elif arg_annimation == 'rainbow_random':
-                    shared.current = "RAINBOW_RANDOM"
-                    apply_change(self)
-                elif arg_annimation == 'all':
-                    shared.current = "ALL"
-                    apply_change(self)
+            if request.method == 'POST':
+                if request.get_json().get('id') != None:
+                    arg_annimation = request.get_json().get('id')
+                    if arg_annimation == 'theater_chase_rainbow':
+                        shared.current = "THEATER_CHASE_RAINBOW"
+                        apply_change(self)
+                    elif arg_annimation == 'rainbow':
+                        shared.current = "RAINBOW"
+                        apply_change(self)
+                    elif arg_annimation == 'rainbow_cycle':
+                        shared.current = "RAINBOW_CYCLE"
+                        apply_change(self)
+                    elif arg_annimation == 'rainbow_random':
+                        shared.current = "RAINBOW_RANDOM"
+                        apply_change(self)
+                    elif arg_annimation == 'all':
+                        shared.current = "ALL"
+                        apply_change(self)
+                    else:
+                        return Response(response=None,status=404,mimetype="application/json")
+                    return Response(response=None,status=200,mimetype="application/json")
                 else:
                     return Response(response=None,status=404,mimetype="application/json")
-                return Response(response=None,status=200,mimetype="application/json")
-            else:
-                return Response(response=None,status=404,mimetype="application/json")
+            elif request.method == 'GET':
+                return Response(None,mimetype="application/json");
 
         @app.route('/color', methods=['GET'])
         def setColor():

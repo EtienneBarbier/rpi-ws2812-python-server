@@ -1,0 +1,29 @@
+{
+  "annimation-list": [
+    {
+      "id" : "theater_chase_rainbow",
+      "name" : "Theater chase rainbow",
+      "description" : "none"
+    },
+    {
+      "id" : "rainbow",
+      "name" : "Rainbow",
+      "description" : "none"
+    },
+    {
+      "id" : "rainbow_cycle",
+      "name" : "Rainbow cycle",
+      "description" : "none"
+    },
+    {
+      "id" : "all",
+      "name" : "All",
+      "description" : "none"
+    },
+    {
+      "id" : "rainbow_random",
+      "name" : "Rainbow random",
+      "description" : "none"
+    },
+  ]
+}
