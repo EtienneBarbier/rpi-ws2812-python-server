@@ -33,6 +33,9 @@ LED_2_INVERT     = False   # True to invert the signal (when using NPN transisto
 LED_2_CHANNEL    = 1       # 0 or 1
 # LED_2_STRIP      = np.ws.WS2811_STRIP_GRB
 
+conf.init_led_table(LED_1_COUNT,LED_2_COUNT);
+
+
 class EndAnimException(Exception):
     pass
 
@@ -82,20 +85,6 @@ class Controller():
         else:
             tmp_timeout = shared.speed * timeout;
             self._change_delay(tmp_timeout,0);
-            # print("tmp_timeout")
-            # print(tmp_timeout)
-            # start = time.time()
-            # self._event_end_start.wait(timeout=tmp_timeout)
-            # if (self._event_end_start.is_set() and not shared.locked_timeout):
-            #     raise EndAnimException
-            # elif shared.locked_timeout:
-            #     stop = time.time()
-            #     remind = tmp_timeout - (stop - start)
-            #     self._event_end_start.clear()
-            #     shared.locked_timeout = False;
-            #     new_time = (shared.speed * timeout)-(remind);
-            #     if new_time >= 0:
-            #         self._change_delay(new_time, timeout)
 
 
     def _nodelay(self):
@@ -109,26 +98,19 @@ class Controller():
     def _rainbowRandom(self):
         if conf.debug_cont:
             debug("Set rainbowRandom")
-        led_1_tab = [[0,0,0,0]]*LED_1_COUNT;
-        led_2_tab = [[0,0,0,0]]*LED_2_COUNT;
-        rand1 = random.randrange(0, LED_1_COUNT-1)
-        rand2 = random.randrange(0, LED_2_COUNT-1)
-        led_1_tab[rand1][0] = 1;
-        led_1_tab[rand1][1] = random.randrange(0, 255);
-        led_1_tab[rand1][2] = random.randrange(0, 255);
-        led_1_tab[rand1][3] = random.randrange(0, 255);
-        led_2_tab[rand2][0] = 1;
-        led_2_tab[rand2][1] = random.randrange(0, 255);
-        led_2_tab[rand2][2] = random.randrange(0, 255);
-        led_2_tab[rand2][3] = random.randrange(0, 255);
+        conf.led_1_tab[random_led(LED_1_COUNT)] = random_color_tab(100);
+        conf.led_2_tab[random_led(LED_2_COUNT)] = random_color_tab(100);
+        print(conf.led_2_tab)
         for i in range(LED_1_COUNT):
-            self._strip1.setPixelColor(i,Color(int(led_1_tab[i][0]*led_1_tab[i][1]),int(led_1_tab[i][0]*led_1_tab[i][2]),int(led_1_tab[i][0]*led_1_tab[i][3])))
-            self._strip2.setPixelColor(i,Color(int(led_2_tab[i][0]*led_2_tab[i][1]),int(led_2_tab[i][0]*led_2_tab[i][2]),int(led_2_tab[i][0]*led_2_tab[i][3])))
-            if led_1_tab[i][0] > 0:
-                led_1_tab[i][0] -= 0.1;
-            if led_2_tab[i][0] > 0:
-                led_2_tab[i][0] -= 0.1;
-        self._delay(timeout=0.3)
+            color1 = compute_color_tab(conf.led_1_tab[i]);
+            color2 = compute_color_tab(conf.led_2_tab[i]);
+            self._strip1.setPixelColor(i,color1);
+            self._strip2.setPixelColor(i,color2);
+            if conf.led_1_tab[i][0] > 0:
+                conf.led_1_tab[i] = reduce_lightness_tab(conf.led_1_tab[i],10);
+            if conf.led_2_tab[i][0] > 0:
+                conf.led_2_tab[i] = reduce_lightness_tab(conf.led_2_tab[i],10);
+        self._delay(timeout=0.5)
 
 
     def _rainbow(self):
@@ -216,6 +198,7 @@ class Controller():
                         self._theaterChaseRainbow()
                 except EndAnimException:
                     if conf.debug_cont:
+                        conf.init_led_table(LED_1_COUNT, LED_2_COUNT);
                         print("Stop Animation")
                     pass
 
