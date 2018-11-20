@@ -15,7 +15,7 @@ except ImportError:
     conf.debug_cont = 1;
 
 # LED strip configuration:
-LED_1_COUNT      = 42      # Number of LED pixels.
+LED_1_COUNT      = 76      # Number of LED pixels.
 LED_1_PIN        = 18      # GPIO pin connected to the pixels (must support PWM! GPIO 13 and 18 on RPi 3).
 LED_1_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_1_DMA        = 10      # DMA channel to use for generating signal (Between 1 and 14)
@@ -24,7 +24,7 @@ LED_1_INVERT     = False   # True to invert the signal (when using NPN transisto
 LED_1_CHANNEL    = 0       # 0 or 1
 # LED_1_STRIP      = np.ws.WS2811_STRIP_GRB
 
-LED_2_COUNT      = 42      # Number of LED pixels.
+LED_2_COUNT      = 76      # Number of LED pixels.
 LED_2_PIN        = 13      # GPIO pin connected to the pixels (must support PWM! GPIO 13 or 18 on RPi 3).
 LED_2_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_2_DMA        = 10      # DMA channel to use for generating signal (Between 1 and 14)
@@ -112,7 +112,7 @@ class Controller():
                 conf.led_1_tab[i] = reduce_lightness_tab(conf.led_1_tab[i],10);
             if conf.led_2_tab[i][0] > 0:
                 conf.led_2_tab[i] = reduce_lightness_tab(conf.led_2_tab[i],10);
-        self._delay(timeout=0.5)
+        self._delay(timeout=0.2)
 
 
     def _rainbow(self):
