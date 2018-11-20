@@ -106,12 +106,12 @@ class Controller():
             color2 = compute_color_tab(conf.led_2_tab[i]);
             self._strip1.setPixelColor(i,color1);
             self._strip2.setPixelColor(i,color2);
-            self._strip1.show()
-            self._strip2.show()
             if conf.led_1_tab[i][0] > 0:
-                conf.led_1_tab[i] = reduce_lightness_tab(conf.led_1_tab[i],10);
+                conf.led_1_tab[i] = reduce_lightness_tab(conf.led_1_tab[i],2);
             if conf.led_2_tab[i][0] > 0:
-                conf.led_2_tab[i] = reduce_lightness_tab(conf.led_2_tab[i],10);
+                conf.led_2_tab[i] = reduce_lightness_tab(conf.led_2_tab[i],2);
+        self._strip1.show()
+        self._strip2.show()
         self._delay(timeout=0.2)
 
 
