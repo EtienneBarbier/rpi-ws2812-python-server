@@ -3,6 +3,7 @@ import shared
 import threading
 import math
 import logging
+from utils_server import *
 from flask import Flask, request, redirect, render_template, jsonify, Response
 from werkzeug.serving import make_server
 from flask_cors import CORS
@@ -143,7 +144,8 @@ class Server(threading.Thread):
                 else:
                     return Response(response=None,status=404,mimetype="application/json")
             elif request.method == 'GET':
-                return Response(None,mimetype="application/json");
+                print(remove_function_annimation_list())
+                return Response(json.dumps(remove_function_annimation_list()),mimetype="application/json");
 
         @app.route('/color', methods=['GET'])
         def setColor():
