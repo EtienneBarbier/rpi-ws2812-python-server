@@ -1,5 +1,4 @@
 import conf
-from lib import *
 import argparse
 import signal
 import shared
@@ -25,6 +24,10 @@ class Controller():
         self._strip2 = np.Adafruit_NeoPixel(lsc.list[1]["count"], lsc.list[1]["pin"], lsc.conf["freq"], lsc.conf["freq"], lsc.list[1]["invert"], lsc.list[1]["brighness"], lsc.list[1]["channel"])
         self._strip1.begin()
         self._strip2.begin()
+        
+    def reset(self):
+        if conf.debug_cont:
+            debug("Reset LEDS")
 
     def setBrightness(self,brighness):
         self._strip1.setBrightness(int(255*brighness));

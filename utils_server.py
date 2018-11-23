@@ -1,5 +1,5 @@
 import json
-from annimation_list import *
+from annimation_rainbow_list import *
 
 def remove_function_annimation_list():
     tmp_annimation_list = annimation_list;
