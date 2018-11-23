@@ -1,3 +1,5 @@
+import annimation_rainbow_function as liban
+
 def init():
     global controller
     global brightness
@@ -12,6 +14,6 @@ def init():
     speed = 1
     start = False
     restart = False
-    current = "FIXED_COLOR"
+    current = "fixed_color"
     color = [255,255,255]
     locked_timeout = False

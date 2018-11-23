@@ -123,23 +123,11 @@ class Server(threading.Thread):
             if request.method == 'POST':
                 if request.get_json().get('id') != None:
                     arg_annimation = request.get_json().get('id')
-                    if arg_annimation == 'theater_chase_rainbow':
-                        shared.current = "THEATER_CHASE_RAINBOW"
-                        apply_change(self)
-                    elif arg_annimation == 'rainbow':
-                        shared.current = "RAINBOW"
-                        apply_change(self)
-                    elif arg_annimation == 'rainbow_cycle':
-                        shared.current = "RAINBOW_CYCLE"
-                        apply_change(self)
-                    elif arg_annimation == 'rainbow_random':
-                        shared.current = "RAINBOW_RANDOM"
-                        apply_change(self)
-                    elif arg_annimation == 'all':
-                        shared.current = "ALL"
-                        apply_change(self)
-                    else:
+                    if arg_annimation == None:
                         return Response(response=None,status=404,mimetype="application/json")
+                    else:
+                        shared.current = arg_annimation;
+                        apply_change(self)
                     return Response(response=None,status=200,mimetype="application/json")
                 else:
                     return Response(response=None,status=404,mimetype="application/json")
@@ -155,7 +143,7 @@ class Server(threading.Thread):
                 shared.color[1] = int(request.args.get('green'))
             if request.args.get('blue') != None:
                 shared.color[2] = int(request.args.get('blue'))
-            shared.current = "FIXED_COLOR"
+            shared.current = "fixed_color"
             apply_change(self)
             return Response(response=None,status=200,mimetype="application/json")
 
