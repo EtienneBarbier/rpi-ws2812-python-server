@@ -20,8 +20,8 @@ class Controller():
 
     def __init__(self,event_end_start):
         self._event_end_start = event_end_start
-        self._strip1 = np.Adafruit_NeoPixel(lsc.list[0]["count"], lsc.list[0]["pin"], lsc.conf["freq"], lsc.conf["freq"], lsc.list[0]["invert"], lsc.list[0]["brighness"], lsc.list[0]["channel"])
-        self._strip2 = np.Adafruit_NeoPixel(lsc.list[1]["count"], lsc.list[1]["pin"], lsc.conf["freq"], lsc.conf["freq"], lsc.list[1]["invert"], lsc.list[1]["brighness"], lsc.list[1]["channel"])
+        self._strip1 = np.Adafruit_NeoPixel(lsc.list[0]["count"], lsc.list[0]["pin"], lsc.conf["freq"], lsc.conf["dma"], lsc.list[0]["invert"], lsc.list[0]["brighness"], lsc.list[0]["channel"])
+        self._strip2 = np.Adafruit_NeoPixel(lsc.list[1]["count"], lsc.list[1]["pin"], lsc.conf["freq"], lsc.conf["dma"], lsc.list[1]["invert"], lsc.list[1]["brighness"], lsc.list[1]["channel"])
         self._strip1.begin()
         self._strip2.begin()
         
