@@ -20,7 +20,6 @@ annimation_list = [
         "name" : "Rainbow cycle",
         "description" : "none",
         "function" : liban.rainbowCycle
-
     },
     {
         "id" : "rainbow_random",
