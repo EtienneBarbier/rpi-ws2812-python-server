@@ -1,4 +1,4 @@
-class Adafruit_NeoPixel(object):
+class PixelStrip(object):
     def __init__(self, num, pin, freq_hz=800000, dma=5, invert=False,
                  brightness=255, channel=0, strip_type=0):
         pass
